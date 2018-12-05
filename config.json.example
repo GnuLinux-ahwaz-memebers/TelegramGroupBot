@@ -1,0 +1,11 @@
+{
+  "TOKEN": "__TOKEN__",
+
+  "PROXY_ON":false,
+  "PROXY_URL": "http://[IP]:[PORT]/",
+
+  "WEB_HOOK_ON": false,
+  "WEB_HOOK_ADDRESS" : "https://[IP OR DOMAIN]",
+  "WEB_HOOK_PORT":"PORT",
+  "WEB_HOOK_LISTEN":"[IP , Using 0.0.0.0 as default]"
+}
