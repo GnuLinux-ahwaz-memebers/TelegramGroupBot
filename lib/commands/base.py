@@ -1,4 +1,4 @@
-from lib.commands.helper import getGroupAdminsId
+from lib.commands.helper import getGroupAdminsId, admin_required, messageRemover
 from lib.loader import config
 
 def group_link(bot,update):
@@ -8,19 +8,6 @@ def group_link(bot,update):
         chat_id=update.message.chat_id,
         text=config().get('GROUP_LINK', "No Link")
     )
-
-def messageRemover(bot,update,message):
-    if message is not None:
-        # delete Message
-        bot.delete_message(
-            chat_id=update.message.chat_id,
-            message_id=message.message_id
-        )
-        return True
-    return False
-
-def __get_chat_id(bot,update):
-    print(update.message.chat_id)
 
 def report(bot,update):
     # get tagged Message
@@ -36,6 +23,7 @@ def report(bot,update):
             message_id= message.message_id
         )
 
+@admin_required
 def kick(bot,update):
     # get tagged Message
     message = update.message.reply_to_message

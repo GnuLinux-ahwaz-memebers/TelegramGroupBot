@@ -7,11 +7,26 @@ def getGroupAdminsId(bot,update):
             )
     return [admin.user.id for admin in admins]
 
+def messageRemover(bot,update,message):
+    if message is not None:
+        # delete Message
+        bot.delete_message(
+            chat_id=update.message.chat_id,
+            message_id=message.message_id
+        )
+        return True
+    return False
+
+def __get_chat_id(bot,update):
+    print(update.message.chat_id)
+
 def admin_required(func):
     def wrapper(*args, **kwargs):
         try:
             bot,update = args
             admins = getGroupAdminsId(*args)
+            # delete ![command] message
+            messageRemover(bot, update, update.message)
             # Check User is Admin or Not
             if update.message.from_user.id not in admins:
                 return None
