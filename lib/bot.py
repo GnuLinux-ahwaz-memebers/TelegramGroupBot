@@ -40,11 +40,8 @@ class Bot:
         except Exception as e:
             log.error(__file__,'start',e)
 
-    def addHandler(self,function,command = None):
+    def addHandler(self,handler,filter,function):
         try:
-            if command is not None:
-                self.dispatcher.add_handler(CommandHandler('{}'.format(command), function))
-            else:
-                self.dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members,function))
+            self.dispatcher.add_handler(handler(filter, function))
         except Exception as e:
             log.error(__file__,'addHandler',e)

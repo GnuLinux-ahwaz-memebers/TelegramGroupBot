@@ -7,5 +7,7 @@
   "WEB_HOOK_ON": false,
   "WEB_HOOK_ADDRESS" : "https://[IP OR DOMAIN]",
   "WEB_HOOK_PORT":"PORT",
-  "WEB_HOOK_LISTEN":"[IP , Using 0.0.0.0 as default]"
+  "WEB_HOOK_LISTEN":"[IP , Using 0.0.0.0 as default]",
+
+  "GROUP_LINK": "__GROUP_LINK__"
 }
