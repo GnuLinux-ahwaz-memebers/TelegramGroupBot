@@ -1,7 +1,6 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 from lib import loader
-from lib.loader import config
 from lib.messages import log
 
 
@@ -24,7 +23,7 @@ class Bot:
         except Exception as e:
             log.error(__file__,'__init__',e)
 
-    def start(self,webhook = config().get('WEB_HOOK_ON',False)):
+    def start(self,webhook = loader.config().get('WEB_HOOK_ON',False)):
         try:
             if webhook:
                 # Run Bot as webhook
