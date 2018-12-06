@@ -4,7 +4,7 @@ from lib.loader import config
 def group_link(bot,update):
     # Get Group link from config file
     bot.send_message(
-        reply_to_message_id=update.message.chat_id,
+        reply_to_message_id=update.message.message_id,
         chat_id=update.message.chat_id,
         text=config().get('GROUP_LINK', "No Link")
     )

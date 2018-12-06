@@ -6,7 +6,6 @@ class log:
     @staticmethod
     def error(file , function , msg):
         logging.error("EXCEPTION [{} - '{}' function] - {}".format(file , function , msg))
-        exit(-1)
     @staticmethod
     def info(msg):
         result = "[*] {}".format(msg)

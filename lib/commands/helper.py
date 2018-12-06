@@ -1,4 +1,5 @@
 from lib.messages import log
+import re
 
 def getGroupAdminsId(bot,update):
     admins = bot.getChatAdministrators(
@@ -22,3 +23,7 @@ def admin_required(func):
     wrapper.__doc__ = func.__doc__
     wrapper.__name__ = func.__name__
     return wrapper
+
+def link_finder(text):
+    TELEGRAM_LINKS_REGEX = r"http(s?)\:\/\/t\.me/[\w\/]+"
+    return re.search(TELEGRAM_LINKS_REGEX,text)
