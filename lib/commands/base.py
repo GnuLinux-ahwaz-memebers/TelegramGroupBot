@@ -19,7 +19,24 @@ def messageRemover(bot,update,message):
         return True
     return False
 
+def __get_chat_id(bot,update):
+    print(update.message.chat_id)
+
 def report(bot,update):
+    # get tagged Message
+    message = update.message.reply_to_message
+    # delete ![command] message
+    messageRemover(bot, update, update.message)
+    # get chat_id of admins group
+    admins_group_chat_id = config().get('ADMINS_GROUP_CHAT_ID',None)
+    if admins_group_chat_id:
+        bot.forward_message(
+            chat_id= admins_group_chat_id,
+            from_chat_id= update.message.chat_id,
+            message_id= message.message_id
+        )
+
+def kick(bot,update):
     # get tagged Message
     message = update.message.reply_to_message
 

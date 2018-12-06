@@ -22,4 +22,4 @@ bot.addHandler(
 )
 
 # start bot
-bot.start(webhook=False)
+bot.start()
