@@ -14,3 +14,7 @@ class log:
 
 class Messages:
     START_MESSAGE = 'HELP MESSAGE'
+    WELCOME = "کاربر {USER} لطفا ورود خود را تایید کنید در غیر اینصورت بعد از {TIME} دقیقه از گروه حذف خواهید شد."
+    REGISTERATION_ACCEPTED = "عضویت شما تایید شد"
+    ANSWER_DENY = "فقط کاربر تگ شده 🙂"
+    REGISTERATION_VERIFY_BUTTON = 'تایید عضویت'

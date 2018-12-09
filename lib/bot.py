@@ -1,4 +1,4 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater
 
 from lib import loader
 from lib.messages import log
@@ -40,8 +40,11 @@ class Bot:
         except Exception as e:
             log.error(__file__,'start',e)
 
-    def addHandler(self,handler,filter,function):
+    def addHandler(self,handler,function,filter = None,**args):
         try:
-            self.dispatcher.add_handler(handler(filter, function))
+            if filter:
+                self.dispatcher.add_handler(handler(filter, function , **args))
+            else:
+                self.dispatcher.add_handler(handler(function))
         except Exception as e:
             log.error(__file__,'addHandler',e)

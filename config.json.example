@@ -10,5 +10,6 @@
   "WEB_HOOK_LISTEN":"[IP , Using 0.0.0.0 as default]",
 
   "GROUP_LINK": "__GROUP_LINK__",
-  "ADMINS_GROUP_CHAT_ID": ID
+  "ADMINS_GROUP_CHAT_ID": ID,
+  "REGISTER_TIMER_MINUTES": 1
 }
