@@ -1,17 +1,30 @@
 from lib.commands.helper import getGroupAdminsId, admin_required, messageRemover
 from lib.loader import config
 
-def group_link(bot,update):
-    # Get Group link from config file
-    GroupLink = config().get('GROUP_LINK', "No Link")
+def __passLink(bot,update,link):
     # get tagged Message
-    message = update.message if update.message else update.message.reply_to_message
-    # Return Group Link
+    message = update.message.reply_to_message if update.message.reply_to_message else update.message
+    # Return Link
     bot.send_message(
         reply_to_message_id=message.message_id,
         chat_id=update.message.chat_id,
-        text=GroupLink
+        text=link
     )
+
+def group_link(bot,update):
+    # Get Group link from config file
+    GroupLink = config().get('GROUP_LINK', "No Link")
+    __passLink(bot,update,GroupLink)
+
+def smart_question(bot,update):
+    # Get link from config file
+    SmartQuestionLink = config().get('SMART_QUESTION_LINK', "No Link")
+    __passLink(bot,update,SmartQuestionLink)
+
+def tor_installation(bot,update):
+    # Get link from config file
+    TorLink = config().get('TOR_INSTALLATION_LINK', "No Link")
+    __passLink(bot, update, TorLink)
 
 def report(bot,update):
     # get tagged Message

@@ -3,8 +3,8 @@ import re
 
 def getGroupAdminsId(bot,update):
     admins = bot.getChatAdministrators(
-                chat_id=update.message.chat_id
-            )
+        chat_id=update.message.chat_id
+    )
     return [admin.user.id for admin in admins]
 
 def restrictUser(bot,update,user,restrict = True):

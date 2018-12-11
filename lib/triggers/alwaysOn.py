@@ -16,9 +16,11 @@ def register_timer(bot,job):
         user_id = job.context.get('user_id')
         # remove message
         if message:
+            # possible message delete
             messageRemover(bot,message)
         # remove user
         if user_id:
+            # possible user leave the group
             bot.kick_chat_member(
                 chat_id=chat_id,
                 user_id=user_id
