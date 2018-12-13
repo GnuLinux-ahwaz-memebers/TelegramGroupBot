@@ -51,6 +51,22 @@ def admin_required(func):
     wrapper.__name__ = func.__name__
     return wrapper
 
+def remove_joined_leave_message(func):
+    def wrapper(*args, **kwargs):
+        try:
+            bot,update = args[0:2]
+            # Check User is Admin or Not
+            if not update.message.new_chat_members or not update.message.left_chat_member:
+                messageRemover(bot, update.message)
+        except Exception as e:
+            log.error(__file__, 'remove_joined_leave_message', e)
+
+        return func(*args, **kwargs)
+
+    wrapper.__doc__ = func.__doc__
+    wrapper.__name__ = func.__name__
+    return wrapper
+
 def link_finder(text):
     TELEGRAM_LINKS_REGEX = r"http(s?)\:\/\/t\.me/[\w\/]+"
     return re.search(TELEGRAM_LINKS_REGEX,text)

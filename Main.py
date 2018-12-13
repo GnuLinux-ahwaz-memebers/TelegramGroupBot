@@ -4,7 +4,6 @@ from lib import  handler
 from lib.triggers import alwaysOn
 from lib.triggers.alwaysOn import callback_handler
 
-
 # Init Bot
 
 bot = Bot()
@@ -13,7 +12,7 @@ bot = Bot()
 bot.addHandler(
     MessageHandler,
     alwaysOn.bots,
-    Filters.status_update.new_chat_members,
+    Filters.group,
     pass_job_queue=True
 )
 
@@ -23,6 +22,7 @@ bot.addHandler(
     handler.dispatcher,
     Filters.text,
 )
+
 
 # callback handler
 bot.addHandler(

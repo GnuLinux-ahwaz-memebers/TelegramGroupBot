@@ -2,11 +2,10 @@ from lib.commands.base import group_link, report, kick, spam, smart_question, to
 from lib.commands.model import Command
 from lib.triggers.alwaysOn import link_remover
 
-
-
 COMMANDS = {
     # Command("COMMAND_NAME",FUNCTION)
     # Command Usage : ![command]
+
     # Send Group Link
     Command("link",group_link),
     # Send Smart Question Link
@@ -25,7 +24,6 @@ COMMANDS = {
 def dispatcher(bot, update):
     # Link Remover
     link_remover(bot,update)
-
     # Commands Handler
     for command in COMMANDS:
         if command.cmd == update.message.text:

@@ -2,7 +2,7 @@ import telegram
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from lib.commands.base import messageRemover
-from lib.commands.helper import link_finder, restrictUser
+from lib.commands.helper import link_finder, restrictUser, remove_joined_leave_message
 from lib.loader import config
 from lib.messages import Messages, log
 
@@ -74,6 +74,7 @@ def registration_verification(bot, update, job_queue, user):
     )
 
 
+@remove_joined_leave_message
 def bots(bot, update,job_queue):
     for user in update.message.new_chat_members:
         # Remove Bot
