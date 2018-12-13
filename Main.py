@@ -5,14 +5,13 @@ from lib.triggers import alwaysOn
 from lib.triggers.alwaysOn import callback_handler
 
 # Init Bot
-
 bot = Bot()
 
 # add Triggers
 bot.addHandler(
     MessageHandler,
     alwaysOn.bots,
-    Filters.group,
+    Filters.status_update,
     pass_job_queue=True
 )
 

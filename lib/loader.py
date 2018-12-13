@@ -1,7 +1,5 @@
 import json
 from os import path,getenv
-
-
 from lib.messages import log
 
 BASE_PATH = path.dirname(path.abspath("{}/../".format(__file__)))

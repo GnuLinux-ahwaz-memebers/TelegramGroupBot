@@ -1,8 +1,10 @@
 from lib.commands.base import group_link, report, kick, spam, smart_question, tor_installation
+from lib.commands.helper import __get_chat_id
 from lib.commands.model import Command
+from lib.loader import config
 from lib.triggers.alwaysOn import link_remover
 
-COMMANDS = {
+COMMANDS = [
     # Command("COMMAND_NAME",FUNCTION)
     # Command Usage : ![command]
 
@@ -18,7 +20,10 @@ COMMANDS = {
     Command("spam",spam),
     # Report Tagged Message
     Command("report",report)
-}
+]
+
+if config().get('ENABLE_GET_CHAT_ID', False):
+    COMMANDS.append(Command("id",__get_chat_id))
 
 # Listen on Messages
 def dispatcher(bot, update):

@@ -29,8 +29,11 @@ def messageRemover(bot,message):
         return True
     return False
 
-def __get_chat_id(update):
-    print(update.message.chat_id)
+def __get_chat_id(bot,update):
+    # print info in terminal
+    log.info("{} : {}".format(update.message.chat.title,update.message.chat_id))
+    # delete command
+    messageRemover(bot, update.message)
 
 def admin_required(func):
     def wrapper(*args, **kwargs):
@@ -56,7 +59,7 @@ def remove_joined_leave_message(func):
         try:
             bot,update = args[0:2]
             # Check User is Admin or Not
-            if not update.message.new_chat_members or not update.message.left_chat_member:
+            if update.message.new_chat_members or update.message.left_chat_member:
                 messageRemover(bot, update.message)
         except Exception as e:
             log.error(__file__, 'remove_joined_leave_message', e)

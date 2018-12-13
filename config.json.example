@@ -1,6 +1,8 @@
 {
   "TOKEN": "__TOKEN__",
 
+  "ENABLE_GET_CHAT_ID": false,
+
   "PROXY_ON":false,
   "PROXY_URL": "http://[IP]:[PORT]/",
 

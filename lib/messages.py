@@ -1,6 +1,5 @@
 import logging
-
-logging.basicConfig(format='%(message)s', level=logging.ERROR)
+logging.basicConfig(format='%(message)s', level=logging.INFO)
 
 class log:
     @staticmethod
@@ -16,7 +15,6 @@ class log:
     @staticmethod
     def info(msg):
         result = "[*] {}".format(msg)
-        print(result)
         logging.info(result)
 
 class Messages:
