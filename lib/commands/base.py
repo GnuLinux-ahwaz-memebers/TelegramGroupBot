@@ -18,12 +18,12 @@ def group_link(bot,update):
 
 def smart_question(bot,update):
     # Get link from config file
-    SmartQuestionLink = config().get('SMART_QUESTION_LINK', "No Link")
+    SmartQuestionLink = config().get('SMART_QUESTION_LINK', "https://wiki.ubuntu.ir/wiki/Smart_Questions")
     __passLink(bot,update,SmartQuestionLink)
 
 def tor_installation(bot,update):
     # Get link from config file
-    TorLink = config().get('TOR_INSTALLATION_LINK', "No Link")
+    TorLink = config().get('TOR_INSTALLATION_LINK', "https://molaei.org/tor-ubuntu/")
     __passLink(bot, update, TorLink)
 
 def report(bot,update):
