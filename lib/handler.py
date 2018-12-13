@@ -6,6 +6,7 @@ from lib.triggers.alwaysOn import link_remover
 
 COMMANDS = {
     # Command("COMMAND_NAME",FUNCTION)
+    # Command Usage : ![command]
     # Send Group Link
     Command("link",group_link),
     # Send Smart Question Link

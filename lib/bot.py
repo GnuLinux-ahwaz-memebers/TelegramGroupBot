@@ -21,7 +21,7 @@ class Bot:
 
             self.dispatcher = self.updater.dispatcher
         except Exception as e:
-            log.error(__file__,'__init__',e)
+            log.error(__file__,'__init__',e,True)
 
     def start(self,webhook = loader.config().get('WEB_HOOK_ON',False)):
         try:
@@ -38,7 +38,7 @@ class Bot:
                 self.updater.start_polling()
             log.info("Bot Started...")
         except Exception as e:
-            log.error(__file__,'start',e)
+            log.error(__file__,'start',e,True)
 
     def addHandler(self,handler,function,filter = None,**args):
         try:
