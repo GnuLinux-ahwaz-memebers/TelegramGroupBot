@@ -1,6 +1,6 @@
 from lib.bot import Bot
 from telegram.ext import MessageHandler, Filters, CallbackQueryHandler
-from lib import  handler
+from lib import handler
 from lib.triggers import alwaysOn
 from lib.triggers.alwaysOn import callback_handler
 
@@ -21,7 +21,6 @@ bot.addHandler(
     handler.dispatcher,
     Filters.text,
 )
-
 
 # callback handler
 bot.addHandler(

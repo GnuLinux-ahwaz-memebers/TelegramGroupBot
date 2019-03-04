@@ -1,13 +1,15 @@
 from lib.messages import log
 import re
 
-def getGroupAdminsId(bot,update):
+
+def getGroupAdminsId(bot, update):
     admins = bot.getChatAdministrators(
         chat_id=update.message.chat_id
     )
     return [admin.user.id for admin in admins]
 
-def restrictUser(bot,update,user,restrict = True):
+
+def restrictUser(bot, update, user, restrict=True):
     # restrict User
     restrict = (not restrict)
     bot.restrict_chat_member(
@@ -19,7 +21,8 @@ def restrictUser(bot,update,user,restrict = True):
         can_add_web_page_previews=restrict,
     )
 
-def messageRemover(bot,message):
+
+def messageRemover(bot, message):
     if message is not None:
         # delete Message
         bot.delete_message(
@@ -29,16 +32,21 @@ def messageRemover(bot,message):
         return True
     return False
 
-def __get_chat_id(bot,update):
+
+def __get_chat_id(bot, update):
     # print info in terminal
-    log.info("{} : {}".format(update.message.chat.title,update.message.chat_id))
+    log.info("{} : {}".format(
+        update.message.chat.title,
+        update.message.chat_id)
+    )
     # delete command
     messageRemover(bot, update.message)
+
 
 def admin_required(func):
     def wrapper(*args, **kwargs):
         try:
-            bot,update = args
+            bot, update = args
             admins = getGroupAdminsId(*args)
             # delete ![command] message
             messageRemover(bot, update.message)
@@ -54,10 +62,12 @@ def admin_required(func):
     wrapper.__name__ = func.__name__
     return wrapper
 
+
 def remove_joined_leave_message(func):
     def wrapper(*args, **kwargs):
         try:
-            bot,update = args[0:2]
+            # TODO: i think it's not safe
+            bot, update = args[0:2]
             # Check User is Admin or Not
             if update.message.new_chat_members or update.message.left_chat_member:
                 messageRemover(bot, update.message)
@@ -70,6 +80,7 @@ def remove_joined_leave_message(func):
     wrapper.__name__ = func.__name__
     return wrapper
 
+
 def link_finder(text):
-    TELEGRAM_LINKS_REGEX = r"http(s?)\:\/\/t\.me/[\w\/]+"
-    return re.search(TELEGRAM_LINKS_REGEX,text)
+    telegram_links_regex = r"http(s?)\:\/\/t\.me/[\w\/]+"
+    return re.search(telegram_links_regex, text)
