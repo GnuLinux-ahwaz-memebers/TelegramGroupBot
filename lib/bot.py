@@ -1,7 +1,6 @@
 from telegram.ext import Updater
-
 from lib import loader
-from lib.messages import log
+from lib.common.services import log
 
 
 class Bot:
@@ -43,10 +42,10 @@ class Bot:
         except Exception as e:
             log.error(__file__, 'start', e, True)
 
-    def addHandler(self, handler, function, filter=None, **args):
+    def addHandler(self, handler, function, filter_=None, **args):
         try:
-            if filter:
-                self.dispatcher.add_handler(handler(filter, function, **args))
+            if filter_:
+                self.dispatcher.add_handler(handler(filter_, function, **args))
             else:
                 self.dispatcher.add_handler(handler(function))
         except Exception as e:

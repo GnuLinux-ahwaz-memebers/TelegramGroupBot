@@ -1,5 +1,5 @@
-from lib.messages import log
 import re
+from lib.common.services import log
 
 
 def getGroupAdminsId(bot, update):

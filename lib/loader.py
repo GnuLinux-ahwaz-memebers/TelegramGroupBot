@@ -1,9 +1,11 @@
 import json
 from os import path, getenv
-from lib.messages import log
+from typing import Optional
+from lib.common.services import log
 
 BASE_PATH = path.dirname(path.abspath("{}/../".format(__file__)))
 CONFIG_FILE_NAME = "config.json"
+TEMPLATES_DIR = "lib/templates"
 
 
 class Config:
@@ -32,3 +34,19 @@ class Config:
 
         # return default
         return default
+
+
+def template_loader(template: str) -> Optional[str]:
+    try:
+        # define template path
+        templates_path = path.join(BASE_PATH, TEMPLATES_DIR)
+
+        # add template name to template path
+        t_path = path.join(templates_path, template)
+
+        # load te from file
+        with open(t_path, 'r') as file:
+            return file.read()
+    except Exception as e:
+        log.warnings(__file__, Config.__name__, e)
+    return None
