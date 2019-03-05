@@ -23,6 +23,7 @@ def restrictUser(bot, update, user, restrict=True):
 
 
 def messageRemover(bot, message):
+    # safe remove (message should be exist)
     if message is not None:
         # delete Message
         bot.delete_message(

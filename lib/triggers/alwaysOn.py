@@ -99,6 +99,7 @@ def registration_verification(bot, update, job_queue, user):
 
 @remove_joined_leave_message
 def bots(bot, update, job_queue):
+    # Multi User Invited Support
     for user in update.message.new_chat_members:
         # Remove Bot
         if user.is_bot:
