@@ -115,19 +115,19 @@ def bots(bot, update, job_queue):
                 user_id=user.id
             )
 
-            # # if user not admin
-            if user.id not in getGroupAdminsId(bot, update):
+            # if user not admin
+            if update.message.from_user.id not in getGroupAdminsId(bot, update):
                 # Kick User who add bot !
                 bot.kick_chat_member(
                     chat_id=update.message.chat_id,
                     user_id=update.message.from_user.id
                 )
+        else:
+            # restrict user
+            restrictUser(bot, update, user)
 
-        # restrict user
-        restrictUser(bot, update, user)
-
-        # check user is bot or not (verify a question)
-        registration_verification(bot, update, job_queue, user)
+            # check user is bot or not (verify a question)
+            registration_verification(bot, update, job_queue, user)
 
 
 def telegram_link_remover(bot, update):
