@@ -69,8 +69,17 @@ def remove_joined_leave_message(func):
         try:
             # TODO: i think it's not safe
             bot, update = args[0:2]
-            # Check User is Admin or Not
-            if update.message.new_chat_members or update.message.left_chat_member:
+
+            # don't effect self
+            if update.message.left_chat_member:
+                if bot.id == update.message.left_chat_member.id:
+                    return None
+            for user in update.message.new_chat_members:
+                if bot.id == user.id:
+                    return None
+
+            # joined/leave members messages
+            if len(update.message.new_chat_members) > 0 or update.message.left_chat_member:
                 messageRemover(bot, update.message)
         except Exception as e:
             log.error(__file__, 'remove_joined_leave_message', e)

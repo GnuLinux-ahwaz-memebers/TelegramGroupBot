@@ -1,8 +1,9 @@
 import telegram
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from lib.commands.base import messageRemover
-from lib.commands.helper import link_finder, restrictUser, remove_joined_leave_message
-from lib.common.messaging import Messages, Templates
+from lib.commands.helper import link_finder, restrictUser, remove_joined_leave_message, getGroupAdminsId
+from lib.common.template import REGISTRATION_ACCEPTED, JUST_TAGGED_USER, REGISTRATION_VERIFY_BUTTON, WELCOME, \
+    GROUP_LINK
 from lib.common.services import log
 from lib.loader import Config
 
@@ -43,13 +44,13 @@ def callback_handler(bot, update):
         messageRemover(bot, message)
 
         # registration accepted nag
-        out_message = Messages.load(Templates.REGISTRATION_ACCEPTED)
+        out_message = REGISTRATION_ACCEPTED.read()
 
         # unrestricted user
         restrictUser(bot, update.callback_query, update.callback_query.from_user, False)
     else:
         # don't touch =)
-        out_message = Messages.load(Templates.JUST_TAGGED_USER)
+        out_message = JUST_TAGGED_USER.read()
 
     bot.answerCallbackQuery(
         callback_query_id=update.callback_query.id,
@@ -58,14 +59,18 @@ def callback_handler(bot, update):
 
 
 def registration_verification(bot, update, job_queue, user):
+    # define button
     commands = [
         [InlineKeyboardButton(
-            Messages.load(Templates.REGISTRATION_VERIFY_BUTTON),
+            REGISTRATION_VERIFY_BUTTON.read(),
             callback_data=str(user.id)
         )],
     ]
+    # create a markup
     reply_markup = InlineKeyboardMarkup(commands)
 
+    # TODO: is it safe ? others can get information about logged in user
+    #   Mitigation: it's better that show first name of joined user
     user_info = "[{}](tg://user?id={})".format(
         user.username if user.username else user.first_name,
         user.id
@@ -75,9 +80,10 @@ def registration_verification(bot, update, job_queue, user):
     timer = Config().get('REGISTER_TIMER_MINUTES', 1)
     timer = int(timer) if not timer.isdecimal() else 1
 
+    # send verification message
     message = bot.send_message(
         chat_id=update.message.chat_id,
-        text=Messages.load(Templates.WELCOME).format(
+        text=WELCOME.read().format(
             USER=user_info,
             TIME=timer
         ),
@@ -103,25 +109,40 @@ def bots(bot, update, job_queue):
     for user in update.message.new_chat_members:
         # Remove Bot
         if user.is_bot:
+            # Kick the bot
             bot.kick_chat_member(
                 chat_id=update.message.chat_id,
                 user_id=user.id
             )
-            # Kick User who add bot !
-            bot.kick_chat_member(
-                chat_id=update.message.chat_id,
-                user_id=update.message.from_user.id
-            )
+
+            # # if user not admin
+            if user.id not in getGroupAdminsId(bot, update):
+                # Kick User who add bot !
+                bot.kick_chat_member(
+                    chat_id=update.message.chat_id,
+                    user_id=update.message.from_user.id
+                )
+
         # restrict user
         restrictUser(bot, update, user)
+
         # check user is bot or not (verify a question)
         registration_verification(bot, update, job_queue, user)
 
 
-def link_remover(bot, update):
+def telegram_link_remover(bot, update):
     # TODO: We should be handle url shorter later!
+    # if message has a text type
+    if bool(update.message.text):
+        text = update.message.text
+    # if message has a forward type
+    elif bool(update.message.forward_date):
+        text = update.message.caption
+    else:
+        return
+
     # find Telegram Links
-    if link_finder(update.message.text):
+    if link_finder(text):
         # Remove Message
-        if Config().get('GROUP_LINK', 'No link').strip() != update.message.text.strip():
+        if GROUP_LINK.read().strip() != text.strip():
             messageRemover(bot, update.message)

@@ -19,7 +19,7 @@ bot.addHandler(
 bot.addHandler(
     MessageHandler,
     handler.dispatcher,
-    Filters.text,
+    Filters.all,
 )
 
 # callback handler

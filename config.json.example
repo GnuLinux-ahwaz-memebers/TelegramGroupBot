@@ -11,10 +11,6 @@
   "WEB_HOOK_PORT":"PORT",
   "WEB_HOOK_LISTEN":"[IP , Using 0.0.0.0 as default]",
 
-  "GROUP_LINK": "__GROUP_LINK__",
   "ADMINS_GROUP_CHAT_ID": ID,
   "REGISTER_TIMER_MINUTES": 1,
-
-  "SMART_QUESTION_LINK": "https://wiki.ubuntu.ir/wiki/Smart_Questions",
-  "TOR_INSTALLATION_LINK": "https://molaei.org/tor-ubuntu/"
 }

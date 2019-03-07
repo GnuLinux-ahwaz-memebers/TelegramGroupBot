@@ -1,9 +1,11 @@
 import telegram
 from lib.commands.helper import getGroupAdminsId, admin_required, messageRemover
+from lib.common.services import log
+from lib.common.template import GROUP_LINK, SMART_QUESTION_LINK, TOR_INSTALLATION_LINK
 from lib.loader import Config
 
 
-def __passContent(bot, update, content):
+def __passContent(bot, update, content, **kwargs):
     # get tagged Message if exists
     message = update.message.reply_to_message \
         if update.message.reply_to_message \
@@ -14,28 +16,26 @@ def __passContent(bot, update, content):
         reply_to_message_id=message.message_id,
         chat_id=update.message.chat_id,
         text=content,
-        # TODO: first we need to prepare template files for commands
-        # parse_mode=telegram.ParseMode.MARKDOWN
+        parse_mode=telegram.ParseMode.MARKDOWN,
+        **kwargs
     )
 
 
 def group_link(bot, update):
-    # Get Group link from config file
-    GroupLink = Config().get('GROUP_LINK', "No Link")
+    # Get Group link from templates
+    GroupLink = GROUP_LINK.read()
     __passContent(bot, update, GroupLink)
 
 
 def smart_question(bot, update):
-    # Get link from config file
-    SmartQuestionLink = Config().get('SMART_QUESTION_LINK',
-                                     "https://wiki.ubuntu.ir/wiki/Smart_Questions")
+    # Get link from from templates
+    SmartQuestionLink = SMART_QUESTION_LINK.read()
     __passContent(bot, update, SmartQuestionLink)
 
 
 def tor_installation(bot, update):
-    # Get link from config file
-    TorLink = Config().get('TOR_INSTALLATION_LINK',
-                           "https://molaei.org/tor-ubuntu/")
+    # Get link from from templates
+    TorLink = TOR_INSTALLATION_LINK.read()
     __passContent(bot, update, TorLink)
 
 
@@ -45,15 +45,19 @@ def report(bot, update):
 
     # delete ![command] message
     messageRemover(bot, update.message)
-
-    # get chat_id of admins group
-    admins_group_chat_id = Config().get('ADMINS_GROUP_CHAT_ID', None)
-    if admins_group_chat_id:
-        bot.forward_message(
-            chat_id=admins_group_chat_id,
-            from_chat_id=update.message.chat_id,
-            message_id=message.message_id
+    try:
+        # get chat_id of admins group
+        admins_group_chat_id = Config().get('ADMINS_GROUP_CHAT_ID', 0)
+        if admins_group_chat_id != 0:
+            bot.forward_message(
+                chat_id=admins_group_chat_id,
+                from_chat_id=update.message.chat_id,
+                message_id=message.message_id
             )
+        else:
+            log.error(__file__, 'report', "you don't set ADMINS_GROUP_CHAT_ID in configuration yet")
+    except Exception as e:
+        log.error(__file__, 'report', e)
 
 
 @admin_required

@@ -2,7 +2,7 @@ from lib.commands.base import group_link, report, kick, spam, smart_question, to
 from lib.commands.helper import __get_chat_id
 from lib.commands.model import Command
 from lib.loader import Config
-from lib.triggers.alwaysOn import link_remover
+from lib.triggers.alwaysOn import telegram_link_remover
 
 COMMANDS = [
     # Command("COMMAND_NAME",FUNCTION)
@@ -34,7 +34,8 @@ if Config().get('ENABLE_GET_CHAT_ID', False):
 # Listen on Messages
 def dispatcher(bot, update):
     # Link Remover
-    link_remover(bot, update)
+    telegram_link_remover(bot, update)
+
     # Commands Handler
     for command in COMMANDS:
         if command.cmd == update.message.text:

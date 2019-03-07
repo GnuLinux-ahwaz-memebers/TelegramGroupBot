@@ -1,0 +1,1 @@
+[چگونه هوشمندانه سوال بپرسیم ؟](https://wiki.ubuntu.ir/wiki/Smart_Questions)
