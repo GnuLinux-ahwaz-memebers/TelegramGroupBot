@@ -1,12 +1,12 @@
 import telegram
 from lib.commands.helper import getGroupAdminsId, admin_required, messageRemover
 from lib.common.services import log
-from lib.common.template import GROUP_LINK, SMART_QUESTION_LINK, TOR_INSTALLATION_LINK
+from lib.common.template import GROUP_LINK, SMART_QUESTION_LINK, TOR_INSTALLATION_LINK, GROUP_LINK_DISABLED
 from lib.loader import Config
 
 
 def __passContent(bot, update, content, **kwargs):
-    # get tagged Message if exists
+    # get mentioned Message if exists
     message = update.message.reply_to_message \
         if update.message.reply_to_message \
         else update.message
@@ -22,9 +22,30 @@ def __passContent(bot, update, content, **kwargs):
 
 
 def group_link(bot, update):
-    # Get Group link from templates
-    GroupLink = GROUP_LINK.read()
-    __passContent(bot, update, GroupLink)
+    # TODO: we can turn off/on it with dynamic methods like send a command to turn off it
+    if Config().get('features', {}).get('GROUP_LINK_ENABLE', False):
+
+        # Get Group link from templates
+        invite_link = bot.getChat(
+            chat_id=update.message.chat_id
+        ).invite_link
+
+        # if link doesn't exist for this bot so we create it
+        if invite_link is None:
+            invite_link = bot.export_chat_invite_link(
+                chat_id=update.message.chat_id
+            )
+
+        # pass invite link to template
+        content = GROUP_LINK.read().format(INVITE_LINK=invite_link)
+    else:
+        # TODO: revoke the previous invite link
+        # bot.export_chat_invite_link(
+        #        chat_id=update.message.chat_id
+        #    )
+        content = GROUP_LINK_DISABLED.read()
+
+    __passContent(bot, update, content)
 
 
 def smart_question(bot, update):

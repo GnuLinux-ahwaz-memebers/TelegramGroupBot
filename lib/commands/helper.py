@@ -1,5 +1,6 @@
 import re
 from lib.common.services import log
+from lib.loader import Config
 
 
 def getGroupAdminsId(bot, update):
@@ -78,9 +79,10 @@ def remove_joined_leave_message(func):
                 if bot.id == user.id:
                     return None
 
-            # joined/leave members messages
-            if len(update.message.new_chat_members) > 0 or update.message.left_chat_member:
-                messageRemover(bot, update.message)
+            if Config().get("features", {}).get('REMOVE_STATUS_MESSAGES', False):
+                # joined/leave/remove members messages
+                if len(update.message.new_chat_members) > 0 or update.message.left_chat_member:
+                    messageRemover(bot, update.message)
         except Exception as e:
             log.error(__file__, 'remove_joined_leave_message', e)
 

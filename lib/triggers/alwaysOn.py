@@ -132,12 +132,18 @@ def bots(bot, update, job_queue):
 
 def telegram_link_remover(bot, update):
     # TODO: We should be handle url shorter later!
+
+    if not Config().get('features', {}).get('TELEGRAM_LINK_REMOVER', False):
+        return None
+
     # if message has a text type
     if bool(update.message.text):
         text = update.message.text
+
     # if message has a forward type
     elif bool(update.message.forward_date):
         text = update.message.caption
+
     else:
         return
 

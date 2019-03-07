@@ -1,1 +1,1 @@
-[لینک گروه](https://t.me/joinchat/AAAAAD8OEeOAho25MOT36A)
+[لینک گروه]({INVITE_LINK})
