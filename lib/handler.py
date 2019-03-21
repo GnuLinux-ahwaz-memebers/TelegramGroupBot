@@ -1,5 +1,5 @@
-from lib.commands.base import group_link, report, kick, spam, smart_question, tor_installation
-from lib.commands.helper import __get_chat_id
+from lib.commands.base import group_link, report, kick, spam, smart_question, tor_installation, farsi, ask_question, \
+    kali, grub_repair, about, usage, __get_chat_id
 from lib.commands.model import Command
 from lib.loader import Config
 from lib.triggers.alwaysOn import telegram_link_remover
@@ -24,7 +24,26 @@ COMMANDS = [
     Command("spam", spam),
 
     # Report Tagged Message (!report)
-    Command("report", report)
+    Command("report", report),
+
+    # Type Farsi (!farsi)
+    Command("farsi", farsi),
+
+    # Ask Question in one Message Please (!ask)
+    Command("ask", ask_question),
+
+    # Don't Use Kali (!kali)
+    Command("kali", kali),
+
+    # Grub Repair (!grub)
+    Command("grub", grub_repair),
+
+    # About (!about)
+    Command("about", about),
+
+    # Bot Usage (!usage)
+    Command("usage", usage),
+
 ]
 
 if Config().get('ENABLE_GET_CHAT_ID', False):

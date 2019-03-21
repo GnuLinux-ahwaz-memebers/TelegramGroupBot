@@ -39,6 +39,10 @@ class Bot:
             else:
                 self.updater.start_polling()
             log.info("Bot Started...")
+            if self.CONFIG.get('ENABLE_GET_CHAT_ID', False):
+                log.info("pass command `!id` in the group to get group_id here (not in the telegram) "
+                         "and set it in ADMINS_GROUP_CHAT_ID variable "
+                         "in the config.json file.")
         except Exception as e:
             log.error(__file__, 'start', e, True)
 

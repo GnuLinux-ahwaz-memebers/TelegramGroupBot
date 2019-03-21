@@ -1,5 +1,7 @@
 import re
+import telegram
 from lib.common.services import log
+from lib.common.template import IT_IS_SUPERGROUP_COMMAND
 from lib.loader import Config
 
 
@@ -35,16 +37,6 @@ def messageRemover(bot, message):
     return False
 
 
-def __get_chat_id(bot, update):
-    # print info in terminal
-    log.info("{} : {}".format(
-        update.message.chat.title,
-        update.message.chat_id)
-    )
-    # delete command
-    messageRemover(bot, update.message)
-
-
 def admin_required(func):
     def wrapper(*args, **kwargs):
         try:
@@ -57,6 +49,29 @@ def admin_required(func):
                 return None
         except Exception as e:
             log.error(__file__, 'admin_required', e)
+
+        return func(*args, **kwargs)
+
+    wrapper.__doc__ = func.__doc__
+    wrapper.__name__ = func.__name__
+    return wrapper
+
+
+def group_command(func):
+    def wrapper(*args, **kwargs):
+        try:
+            bot, update = args
+            if update.message.chat.type.strip() != "supergroup":
+                bot.send_message(
+                    reply_to_message_id=update.message.message_id,
+                    chat_id=update.message.chat_id,
+                    text=IT_IS_SUPERGROUP_COMMAND.read(),
+                    parse_mode=telegram.ParseMode.MARKDOWN,
+                    **kwargs
+                )
+                return None
+        except Exception as e:
+            log.error(__file__, 'group_command', e)
 
         return func(*args, **kwargs)
 

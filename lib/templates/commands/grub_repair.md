@@ -1,0 +1,1 @@
+You can repair grub with following link:

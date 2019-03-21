@@ -1,7 +1,8 @@
 import telegram
-from lib.commands.helper import getGroupAdminsId, admin_required, messageRemover
+from lib.commands.helper import getGroupAdminsId, admin_required, messageRemover, group_command
 from lib.common.services import log
-from lib.common.template import GROUP_LINK, SMART_QUESTION_LINK, TOR_INSTALLATION_LINK, GROUP_LINK_DISABLED
+from lib.common.template import GROUP_LINK, SMART_QUESTION_LINK, TOR_INSTALLATION_LINK, GROUP_LINK_DISABLED, FARSI, \
+    GRUB_REPAIR, ASK_QUESTION, KALI, ABOUT, USAGE
 from lib.loader import Config
 
 
@@ -21,6 +22,18 @@ def __passContent(bot, update, content, **kwargs):
     )
 
 
+@group_command
+def __get_chat_id(bot, update):
+    # print info in terminal
+    log.info("Group.name: '{}' , Group.id: '{}'".format(
+        update.message.chat.title,
+        update.message.chat_id)
+    )
+    # delete command
+    messageRemover(bot, update.message)
+
+
+@group_command
 def group_link(bot, update):
     # TODO: we can turn off/on it with dynamic methods like send a command to turn off it
     if Config().get('features', {}).get('GROUP_LINK_ENABLE', False):
@@ -48,18 +61,7 @@ def group_link(bot, update):
     __passContent(bot, update, content)
 
 
-def smart_question(bot, update):
-    # Get link from from templates
-    SmartQuestionLink = SMART_QUESTION_LINK.read()
-    __passContent(bot, update, SmartQuestionLink)
-
-
-def tor_installation(bot, update):
-    # Get link from from templates
-    TorLink = TOR_INSTALLATION_LINK.read()
-    __passContent(bot, update, TorLink)
-
-
+@group_command
 def report(bot, update):
     # get tagged Message
     message = update.message.reply_to_message
@@ -81,6 +83,7 @@ def report(bot, update):
         log.error(__file__, 'report', e)
 
 
+@group_command
 @admin_required
 def spam(bot, update):
     # get tagged Message
@@ -93,6 +96,7 @@ def spam(bot, update):
     messageRemover(bot, update.message)
 
 
+@group_command
 @admin_required
 def kick(bot, update):
     # get tagged Message
@@ -107,3 +111,43 @@ def kick(bot, update):
                 chat_id=update.message.chat_id,
                 user_id=message.from_user.id
             )
+
+
+def smart_question(bot, update):
+    # Get link from templates
+    __passContent(bot, update, SMART_QUESTION_LINK.read())
+
+
+def tor_installation(bot, update):
+    # Get link from templates
+    __passContent(bot, update, TOR_INSTALLATION_LINK.read())
+
+
+def farsi(bot, update):
+    # Get link from templates
+    __passContent(bot, update, FARSI.read())
+
+
+def grub_repair(bot, update):
+    # Get link from templates
+    __passContent(bot, update, GRUB_REPAIR.read())
+
+
+def ask_question(bot, update):
+    # Get link from templates
+    __passContent(bot, update, ASK_QUESTION.read())
+
+
+def kali(bot, update):
+    # Get link from from templates
+    __passContent(bot, update, KALI.read())
+
+
+def about(bot, update):
+    # Get link from from templates
+    __passContent(bot, update, ABOUT.read())
+
+
+def usage(bot, update):
+    # Get link from from templates
+    __passContent(bot, update, USAGE.read())
