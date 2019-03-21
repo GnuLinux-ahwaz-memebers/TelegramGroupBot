@@ -36,7 +36,7 @@ def __get_chat_id(bot, update):
 @group_command
 def group_link(bot, update):
     # TODO: we can turn off/on it with dynamic methods like send a command to turn off it
-    if Config().get('features', {}).get('GROUP_LINK_ENABLE', False):
+    if Config().get('features.GROUP_LINK_ENABLE', False):
 
         # Get Group link from templates
         invite_link = bot.getChat(
@@ -91,9 +91,6 @@ def spam(bot, update):
 
     # delete tagged message
     messageRemover(bot, message)
-
-    # delete ![command] message
-    messageRemover(bot, update.message)
 
 
 @group_command
