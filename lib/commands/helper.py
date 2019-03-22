@@ -27,6 +27,12 @@ def restrictUser(bot, update, user, restrict=True):
 
 def messageRemover(bot, message):
     # safe remove (message should be exist)
+    if type(message) is dict:
+        bot.delete_message(
+            chat_id=message.get('chat_id', 0),
+            message_id=message.get('message_id', 0)
+        )
+        return True
     if message is not None:
         # delete Message
         bot.delete_message(
@@ -42,8 +48,6 @@ def admin_required(func):
         try:
             bot, update = args
             admins = getGroupAdminsId(*args)
-            # delete ![command] message
-            messageRemover(bot, update.message)
             # Check User is Admin or Not
             if update.message.from_user.id not in admins:
                 return None
@@ -95,6 +99,7 @@ def remove_joined_leave_message(func):
                     return None
 
             if Config().get('features.REMOVE_STATUS_MESSAGES', False):
+                # TODO: this has overlap with other usage of new_chat_members in functions that using this decorator
                 # joined/leave/remove members messages
                 if len(update.message.new_chat_members) > 0 or update.message.left_chat_member:
                     messageRemover(bot, update.message)

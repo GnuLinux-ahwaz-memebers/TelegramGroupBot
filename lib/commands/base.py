@@ -4,6 +4,7 @@ from lib.common.services import log
 from lib.common.template import GROUP_LINK, SMART_QUESTION_LINK, TOR_INSTALLATION_LINK, GROUP_LINK_DISABLED, FARSI, \
     GRUB_REPAIR, ASK_QUESTION, KALI, ABOUT, USAGE
 from lib.loader import Config
+from lib.triggers.alwaysOn import reported_message_delete
 
 
 def __passContent(bot, update, content, **kwargs):
@@ -72,11 +73,12 @@ def report(bot, update):
         # get chat_id of admins group
         admins_group_chat_id = Config().get('ADMINS_GROUP_CHAT_ID', 0)
         if admins_group_chat_id != 0:
-            bot.forward_message(
+            forwarded_message = bot.forward_message(
                 chat_id=admins_group_chat_id,
                 from_chat_id=update.message.chat_id,
                 message_id=message.message_id
             )
+            reported_message_delete(bot, update, admins_group_chat_id, forwarded_message, message)
         else:
             log.error(__file__, 'report', "you don't set ADMINS_GROUP_CHAT_ID in configuration yet")
     except Exception as e:
@@ -92,12 +94,18 @@ def spam(bot, update):
     # delete tagged message
     messageRemover(bot, message)
 
+    # delete ![command] message
+    messageRemover(bot, update.message)
+
 
 @group_command
 @admin_required
 def kick(bot, update):
     # get tagged Message
     message = update.message.reply_to_message
+
+    # delete ![command] message
+    messageRemover(bot, update.message)
 
     # delete tagged message
     if messageRemover(bot, message):

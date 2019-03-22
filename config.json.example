@@ -17,6 +17,7 @@
   "features": {
     "TELEGRAM_LINK_REMOVER": true,
     "REMOVE_STATUS_MESSAGES": true,
-    "GROUP_LINK_ENABLE": true
+    "GROUP_LINK_ENABLE": true,
+    "LOGIN_RESTRICTION": false
   }
 }

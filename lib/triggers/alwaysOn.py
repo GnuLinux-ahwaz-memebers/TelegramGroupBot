@@ -1,9 +1,11 @@
+import json
+
 import telegram
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from lib.commands.base import messageRemover
 from lib.commands.helper import link_finder, restrictUser, remove_joined_leave_message, getGroupAdminsId
 from lib.common.template import REGISTRATION_ACCEPTED, JUST_TAGGED_USER, REGISTRATION_VERIFY_BUTTON, WELCOME, \
-    GROUP_LINK
+    GROUP_LINK, DELETE_REPORTED_MESSAGE_BUTTON, DELETE_REPORTED_MESSAGE, REPORTED_MESSAGE_DELETED
 from lib.common.services import log
 from lib.loader import Config
 
@@ -36,6 +38,9 @@ def register_timer(bot, job):
 
 
 def callback_handler(bot, update):
+
+    data = json.loads(update.callback_query.data)
+    # TODO: i change the data serialization but didn't test it work or not =)
     if update.callback_query.data == str(update.callback_query.from_user.id):
         # get welcome message
         message = update.callback_query.message
@@ -48,9 +53,31 @@ def callback_handler(bot, update):
 
         # unrestricted user
         restrictUser(bot, update.callback_query, update.callback_query.from_user, False)
+
+    elif data.get('fmsg_id', 0) == \
+            update.callback_query.message.reply_to_message.message_id:
+        # here messages (2 messages , forwarded and question)
+        messageRemover(bot, {
+            'chat_id': update.callback_query.message.chat_id,
+            'message_id': data.get('fmsg_id')
+        })
+        messageRemover(bot, {
+            'chat_id': update.callback_query.message.chat_id,
+            'message_id': update.callback_query.message.message_id
+        })
+        # delete main forwarded messages from other chat_id
+        messageRemover(bot, {
+            'chat_id': data.get('chat_id', 0),
+            'message_id': data.get('msg_id', 0)
+        })
+
+        out_message = REPORTED_MESSAGE_DELETED.read()
     else:
-        # don't touch =)
-        out_message = JUST_TAGGED_USER.read()
+        # TODO: we should pass a suitable message
+        out_message = "Nothing"
+    # else:
+    #     # don't touch =)
+    #     out_message = JUST_TAGGED_USER.read()
 
     bot.answerCallbackQuery(
         callback_query_id=update.callback_query.id,
@@ -77,7 +104,7 @@ def registration_verification(bot, update, job_queue, user):
     )
 
     # timer should be a number (we wanna use integer)
-    timer = Config().get('REGISTER_TIMER_MINUTES', 1)
+    timer = str(Config().get('REGISTER_TIMER_MINUTES', 1))
     timer = int(timer) if not timer.isdecimal() else 1
 
     # send verification message
@@ -123,11 +150,12 @@ def bots(bot, update, job_queue):
                     user_id=update.message.from_user.id
                 )
         else:
-            # restrict user
-            restrictUser(bot, update, user)
+            if Config().get('features.LOGIN_RESTRICTION', False):
+                # restrict user
+                restrictUser(bot, update, user)
 
-            # check user is bot or not (verify a question)
-            registration_verification(bot, update, job_queue, user)
+                # check user is bot or not (verify a question)
+                registration_verification(bot, update, job_queue, user)
 
 
 def telegram_link_remover(bot, update):
@@ -151,3 +179,29 @@ def telegram_link_remover(bot, update):
         # Remove Message
         if GROUP_LINK.read().strip() != text.strip():
             messageRemover(bot, update.message)
+
+
+def reported_message_delete(bot, update, admins_group_chat_id, forwarded_message, message):
+    # define button
+    commands = [
+        [InlineKeyboardButton(
+            DELETE_REPORTED_MESSAGE_BUTTON.read(),
+            # we can't use long keys (restricted by telegram: 1-64 bytes)
+            callback_data=json.dumps({
+                'chat_id': message.chat_id,
+                'msg_id': message.message_id,
+                'fmsg_id': forwarded_message.message_id
+            })
+        )],
+    ]
+
+    # create a markup
+    reply_markup = InlineKeyboardMarkup(commands)
+
+    bot.send_message(
+        chat_id=admins_group_chat_id,
+        text=DELETE_REPORTED_MESSAGE.read(),
+        reply_to_message_id=forwarded_message.message_id,
+        reply_markup=reply_markup,
+        parse_mode=telegram.ParseMode.MARKDOWN
+    )
