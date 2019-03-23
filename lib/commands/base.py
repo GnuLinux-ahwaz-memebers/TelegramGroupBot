@@ -2,7 +2,7 @@ import telegram
 from lib.commands.helper import getGroupAdminsId, admin_required, messageRemover, group_command
 from lib.common.services import log
 from lib.common.template import GROUP_LINK, SMART_QUESTION_LINK, TOR_INSTALLATION_LINK, GROUP_LINK_DISABLED, FARSI, \
-    GRUB_REPAIR, ASK_QUESTION, KALI, ABOUT, USAGE
+    GRUB_REPAIR, ASK_QUESTION, KALI, ABOUT, USAGE, DELETE_REPORTED_MESSAGE, REPORT_MESSAGE
 from lib.loader import Config
 from lib.triggers.listeners import reported_message_delete
 
@@ -37,7 +37,7 @@ def __get_chat_id(bot, update):
 @group_command
 def group_link(bot, update):
     # TODO: we can turn off/on it with dynamic methods like send a command to turn off it
-    if Config().get('features_handler.GROUP_LINK_ENABLE', False):
+    if Config().get('features.GROUP_LINK_ENABLE', False):
 
         # Get Group link from templates
         invite_link = bot.getChat(
@@ -78,7 +78,29 @@ def report(bot, update):
                 from_chat_id=update.message.chat_id,
                 message_id=message.message_id
             )
+
             reported_message_delete(bot, update, admins_group_chat_id, forwarded_message, message)
+            # TODO: Replace Method
+            # user = message.from_user
+            # user_info = "[{}](tg://user?id={})".format(
+            #     user.username if user.username else user.first_name,
+            #     user.id
+            # )
+            # # TODO: video, sticker
+            # if bool(message.photo):
+            #     bot.send_photo(
+            #
+            #     )
+            # else:
+            #     bot.send_message(
+            #         chat_id=admins_group_chat_id,
+            #         text=REPORT_MESSAGE.read().format(
+            #             user=user_info,
+            #             message=message.text
+            #         ),
+            #         parse_mode=telegram.ParseMode.MARKDOWN,
+            #     )
+
         else:
             log.error(__file__, 'report', "you don't set ADMINS_GROUP_CHAT_ID in configuration yet")
     except Exception as e:

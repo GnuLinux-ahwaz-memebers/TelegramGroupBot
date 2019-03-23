@@ -4,7 +4,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from lib.commands.base import messageRemover
 from lib.commands.helper import link_finder, restrictUser, remove_joined_leave_message, getGroupAdminsId
 from lib.common.template import REGISTRATION_ACCEPTED, JUST_TAGGED_USER, REGISTRATION_VERIFY_BUTTON, WELCOME, \
-    GROUP_LINK, DELETE_REPORTED_MESSAGE_BUTTON, DELETE_REPORTED_MESSAGE, REPORTED_MESSAGE_DELETED
+    GROUP_LINK, DELETE_REPORTED_MESSAGE_BUTTON, REPORT_MESSAGE, DELETE_REPORTED_MESSAGE
 from lib.common.services import log
 from lib.loader import Config
 
@@ -39,6 +39,8 @@ def register_timer(bot, job):
 def callback_handler(bot, update):
 
     data = json.loads(update.callback_query.data)
+    reply_message = update.callback_query.message.reply_to_message
+
     # TODO: i change the data serialization but didn't test it work or not =)
     if update.callback_query.data == str(update.callback_query.from_user.id):
         # get welcome message
@@ -53,8 +55,7 @@ def callback_handler(bot, update):
         # unrestricted user
         restrictUser(bot, update.callback_query, update.callback_query.from_user, False)
 
-    elif data.get('fmsg_id', 0) == \
-            update.callback_query.message.reply_to_message.message_id:
+    elif reply_message and (data.get('fmsg_id', 0) == reply_message.message_id):
         # here messages (2 messages , forwarded and question)
         messageRemover(bot, {
             'chat_id': update.callback_query.message.chat_id,
@@ -70,10 +71,15 @@ def callback_handler(bot, update):
             'message_id': data.get('msg_id', 0)
         })
 
-        out_message = REPORTED_MESSAGE_DELETED.read()
+        out_message = DELETE_REPORTED_MESSAGE.read()
     else:
         # TODO: we should pass a suitable message
-        out_message = "Nothing"
+        out_message = "Delete self"
+        messageRemover(bot, {
+            'chat_id': update.callback_query.message.chat_id,
+            'message_id': update.callback_query.message.message_id
+        })
+
     # else:
     #     # don't touch =)
     #     out_message = JUST_TAGGED_USER.read()
@@ -149,7 +155,7 @@ def bots(bot, update, job_queue):
                     user_id=update.message.from_user.id
                 )
         else:
-            if Config().get('features_handler.LOGIN_RESTRICTION', False):
+            if Config().get('features.LOGIN_RESTRICTION', False):
                 # restrict user
                 restrictUser(bot, update, user)
 
@@ -159,7 +165,7 @@ def bots(bot, update, job_queue):
 
 def telegram_link_remover(bot, update):
     # TODO: We should be handle url shorter later!
-    if not Config().get('features_handler.TELEGRAM_LINK_REMOVER', False):
+    if not Config().get('features.TELEGRAM_LINK_REMOVER', False):
         return None
 
     # if message has a text type
@@ -199,7 +205,7 @@ def reported_message_delete(bot, update, admins_group_chat_id, forwarded_message
 
     bot.send_message(
         chat_id=admins_group_chat_id,
-        text=DELETE_REPORTED_MESSAGE.read(),
+        text=REPORT_MESSAGE.read(),
         reply_to_message_id=forwarded_message.message_id,
         reply_markup=reply_markup,
         parse_mode=telegram.ParseMode.MARKDOWN

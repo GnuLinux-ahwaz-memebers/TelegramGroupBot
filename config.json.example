@@ -14,7 +14,7 @@
   "ADMINS_GROUP_CHAT_ID": ID,
   "REGISTER_TIMER_MINUTES": 1,
 
-  "features_handler": {
+  "features": {
     "TELEGRAM_LINK_REMOVER": true,
     "REMOVE_STATUS_MESSAGES": true,
     "GROUP_LINK_ENABLE": true,

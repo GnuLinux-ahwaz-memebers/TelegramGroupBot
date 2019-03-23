@@ -15,7 +15,7 @@ bot.addHandler(
     Filters.status_update,
     pass_job_queue=True
 )
-# features_handler
+# features
 bot.addHandler(
     MessageHandler,
     features_handler,
