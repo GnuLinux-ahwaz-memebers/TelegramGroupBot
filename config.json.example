@@ -1,7 +1,7 @@
 {
   "TOKEN": "__TOKEN__",
 
-  "ENABLE_GET_CHAT_ID": false,
+  "ENABLE_GET_CHAT_ID": true,
 
   "PROXY_ON":false,
   "PROXY_URL": "http://[IP]:[PORT]/",
@@ -14,10 +14,15 @@
   "ADMINS_GROUP_CHAT_ID": ID,
   "REGISTER_TIMER_MINUTES": 1,
 
-  "features": {
+  "features_handler": {
     "TELEGRAM_LINK_REMOVER": true,
     "REMOVE_STATUS_MESSAGES": true,
     "GROUP_LINK_ENABLE": true,
-    "LOGIN_RESTRICTION": false
+    "LOGIN_RESTRICTION": false,
+    "NUDITY_DETECTION": {
+      "ACTIVE": false,
+      "ACCURACY": 0.15,
+      "API_KEY": "<API_KEY>"
+    }
   }
 }

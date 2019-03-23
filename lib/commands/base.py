@@ -4,7 +4,7 @@ from lib.common.services import log
 from lib.common.template import GROUP_LINK, SMART_QUESTION_LINK, TOR_INSTALLATION_LINK, GROUP_LINK_DISABLED, FARSI, \
     GRUB_REPAIR, ASK_QUESTION, KALI, ABOUT, USAGE
 from lib.loader import Config
-from lib.triggers.alwaysOn import reported_message_delete
+from lib.triggers.listeners import reported_message_delete
 
 
 def __passContent(bot, update, content, **kwargs):
@@ -37,7 +37,7 @@ def __get_chat_id(bot, update):
 @group_command
 def group_link(bot, update):
     # TODO: we can turn off/on it with dynamic methods like send a command to turn off it
-    if Config().get('features.GROUP_LINK_ENABLE', False):
+    if Config().get('features_handler.GROUP_LINK_ENABLE', False):
 
         # Get Group link from templates
         invite_link = bot.getChat(

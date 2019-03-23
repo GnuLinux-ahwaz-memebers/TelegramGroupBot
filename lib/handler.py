@@ -2,7 +2,7 @@ from lib.commands.base import group_link, report, kick, spam, smart_question, to
     kali, grub_repair, about, usage, __get_chat_id
 from lib.commands.model import Command
 from lib.loader import Config
-from lib.triggers.alwaysOn import telegram_link_remover
+from lib.triggers.listeners import telegram_link_remover
 
 COMMANDS = [
     # Command("COMMAND_NAME",FUNCTION)
@@ -56,6 +56,7 @@ def dispatcher(bot, update):
     telegram_link_remover(bot, update)
 
     # Commands Handler
-    for command in COMMANDS:
-        if command.cmd == update.message.text:
-            command.run(bot, update)
+    if str(update.message.text).startswith("!"):
+        for command in COMMANDS:
+            if command.cmd == update.message.text:
+                command.run(bot, update)

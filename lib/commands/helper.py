@@ -98,7 +98,7 @@ def remove_joined_leave_message(func):
                 if bot.id == user.id:
                     return None
 
-            if Config().get('features.REMOVE_STATUS_MESSAGES', False):
+            if Config().get('features_handler.REMOVE_STATUS_MESSAGES', False):
                 # TODO: this has overlap with other usage of new_chat_members in functions that using this decorator
                 # joined/leave/remove members messages
                 if len(update.message.new_chat_members) > 0 or update.message.left_chat_member:

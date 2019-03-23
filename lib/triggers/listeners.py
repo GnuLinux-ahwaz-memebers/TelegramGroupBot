@@ -1,5 +1,4 @@
 import json
-
 import telegram
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from lib.commands.base import messageRemover
@@ -150,7 +149,7 @@ def bots(bot, update, job_queue):
                     user_id=update.message.from_user.id
                 )
         else:
-            if Config().get('features.LOGIN_RESTRICTION', False):
+            if Config().get('features_handler.LOGIN_RESTRICTION', False):
                 # restrict user
                 restrictUser(bot, update, user)
 
@@ -160,7 +159,7 @@ def bots(bot, update, job_queue):
 
 def telegram_link_remover(bot, update):
     # TODO: We should be handle url shorter later!
-    if not Config().get('features.TELEGRAM_LINK_REMOVER', False):
+    if not Config().get('features_handler.TELEGRAM_LINK_REMOVER', False):
         return None
 
     # if message has a text type
@@ -177,7 +176,7 @@ def telegram_link_remover(bot, update):
     # find Telegram Links
     if link_finder(text):
         # Remove Message
-        if GROUP_LINK.read().strip() != text.strip():
+        if GROUP_LINK.read() != text.strip():
             messageRemover(bot, update.message)
 
 

@@ -13,10 +13,10 @@ ENV TOKEN "PASTE_TOKEN_HERE"
 # uncomment it , pass `!id` command in group to get group id in log mode.
 ENV ENABLE_GET_CHAT_ID true
 
-# features
-ENV features.TELEGRAM_LINK_REMOVER true
-ENV features.REMOVE_STATUS_MESSAGES true
-ENV features.GROUP_LINK_ENABLE true
+# features_handler
+ENV features_handler.TELEGRAM_LINK_REMOVER true
+ENV features_handler.REMOVE_STATUS_MESSAGES true
+ENV features_handler.GROUP_LINK_ENABLE true
 
 # PROXY Variables
 # ENV PROXY_ON true
@@ -40,7 +40,7 @@ ENV features.GROUP_LINK_ENABLE true
 RUN apt-get update
 RUN apt-get install python3-pip git -y
 
-# fetch from repo
+# copy to container
 ADD . BOT
 
 # Change Working Directory
