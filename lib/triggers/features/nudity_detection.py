@@ -1,18 +1,25 @@
+from threading import Thread
+
 import requests
 import os
 
 from lib.commands.helper import messageRemover, group_command
 from lib.common.services import log
-
+from tempfile import gettempdir
+# TODO: Handling  worker threads using PoolExecuter doesn't work :|
+# from concurrent.futures import ThreadPoolExecutor as PoolExecutor
 # Constants
 from lib.loader import Config
+
+# executor = PoolExecutor(3)
+# executor = ThreadPoolExecutor(Config.getInt("GENERAL.MAX_THREAD_COUNT", 3)))
 
 API_URL = "https://api.deepai.org/api/nsfw-detector"
 
 
-def detection(image_path: str, api_key: str = None) -> int:
+def detect_nudity_deepai_api(image_path: str, api_key: str = None) -> int:
     if api_key is None:
-        api_key = Config().get("features.NUDITY_DETECTION.API_KEY", None)
+        api_key = Config.get("NUDITY_DETECTION.API_KEY", None)
     try:
         req = requests.post(
             API_URL,
@@ -29,22 +36,35 @@ def detection(image_path: str, api_key: str = None) -> int:
     return 0
 
 
+def download_image_async(bot, update, file_id):
+    bot_file = bot.getFile(file_id=file_id)
+    image_location = os.path.join(gettempdir(), file_id)
+    bot_file.download(image_location)
+    try:
+        # pass image to check nudity (thread)
+        accuracy = detect_nudity_deepai_api(image_location)
+        # decision delete message or not
+        if accuracy >= Config.getFloat("NUDITY_DETECTION.ACCURACY_THRESHHOLD"):
+            messageRemover(bot, update.message)
+    except Exception as e:
+        log.error(__file__, 'download_image_async', e)
+
+    # remove downloaded image if found
+    if os.path.exists(image_location):
+        os.remove(image_location)
+
+
 @group_command
 def handler(bot, update):
-    # download image
+    # download images in
+    # image_dl_threads = []
+    # for photo in update.message.photo:
+    #     file_id = photo.file_id
     file_id = update.message.photo[-1].file_id
-    file = bot.getFile(file_id=file_id)
-    # TODO: i have any idea about windows systems for this location =)
-    image_location = "/tmp/{}.jpg".format(file_id)
-    file.download(image_location)
-
-    # TODO: it's better to use safe-thread
-    # pass image to check nudity (thread)
-    accuracy = detection(image_location)
-
-    # decision delete message or not
-    if accuracy >= Config().get("features.NUDITY_DETECTION.ACCURACY"):
-        messageRemover(bot, update.message)
-
-    # remove downloaded image
-    os.remove(image_location)
+    download_file_thread = Thread(target=download_image_async, args=(bot, update, file_id))
+    download_file_thread.start()
+    log.info("Downloading image {} async".format(file_id))
+    # executor.submit(download_image_async, bot, update, file_id)
+    # download_image_async(bot, update, file_id)
+    # image_dl_threads.append(image_dl_thread)
+    # image_dl_thread.join()

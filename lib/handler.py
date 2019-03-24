@@ -46,7 +46,7 @@ COMMANDS = [
 
 ]
 
-if Config().get('ENABLE_GET_CHAT_ID', False):
+if Config.get('GENERAL.ENABLE_GET_CHAT_ID', False):
     COMMANDS.append(Command("id", __get_chat_id))
 
 

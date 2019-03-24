@@ -1,61 +1,70 @@
 # -*- coding: utf-8 -*-
 import json
-from os import path, getenv
+from os import path, getenv, pardir
+from pathlib import Path
 from typing import Optional
 from lib.common.services import log
+from configparser import ConfigParser
 
-BASE_PATH = path.dirname(path.abspath("{}/../".format(__file__)))
-CONFIG_FILE_NAME = "config.json"
+BASE_PATH = path.join(path.abspath(path.dirname(__file__)), pardir)
+CONFIG_FILE_NAME = "config.ini"
 TEMPLATES_DIR = "lib/templates"
 
 
 class Config:
+    _instance = None
 
     def __init__(self):
+        if Config._instance:
+            return
+        log.info("Reading config file")
         self.configs = None
         try:
             # load configs from file
-            with open(path.join(BASE_PATH, CONFIG_FILE_NAME), 'r') as conf:
-                self.configs = json.load(conf)
+            config_path = path.join(BASE_PATH, CONFIG_FILE_NAME)
+            self.configs = ConfigParser()
+            self.configs.read(config_path)
         except Exception as e:
             log.warnings(__file__, Config.__name__, e)
 
-    def get(self, key: str, default=None, json_format=False):
+    @staticmethod
+    def getInt(key: str, default=None):
+        return int(Config.get(key,default))
+
+    @staticmethod
+    def getFloat(key: str, default=None):
+        return float(Config.get(key,default))
+
+    @staticmethod
+    def getString(key: str, default=None):
+        return str(Config.get(key, default))
+
+    @staticmethod
+    def get(key: str, default=None):
+
+        if len(key) == 0 or '.' not in key == 0:
+            return default
+
+        if not Config._instance:
+            Config._instance = Config()
+
         # read from environment
         value = getenv(key)
         if value:
-            # if key exist in environment
-            # TODO: using of eval function , can be critical !
-            return eval(value.title()) if value.lower() in ['false', 'true'] else value
+            # ignore config if key exists in environment, convert too bool type if possible
+            return value.lower() == 'true' if value.lower() in ['false', 'true'] else value
 
-        # read from file
-        if self.configs:
-            if not json_format:
-                # split keys
-                keys = key.strip().split(".")
-
-                # we should have some keys
-                if len(keys) == 0:
-                    return default
-
-                result = self.configs.get(keys[0])
-                # follow keys to respond value
-                for val in keys[1:]:
-                    if type(result) is dict:
-                        result = result.get(val)
-
-                if result is None:
-                    # we pass default value
-                    return default
-                else:
-                    # pass result (we can obtain dictionary too)
-                    return result
-            else:
-                # if key exist in file
-                return self.configs.get(key, default)
-
-        # return default
-        return default
+        keys = key.strip().split(".")
+        value = default
+        try:
+            value = Config._instance.configs[keys[0]]
+            for k in keys[1:]:
+                value = value[k]
+            if value.lower() in ['false', 'True']:
+                return value.lower() == 'true'
+            return value
+        except:
+            return default
 
 
 def template_loader(template: str) -> Optional[str]:
