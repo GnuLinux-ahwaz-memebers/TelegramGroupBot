@@ -12,14 +12,14 @@ from tempfile import gettempdir
 from lib.loader import Config
 
 # executor = PoolExecutor(3)
-# executor = ThreadPoolExecutor(int(Config().get("MAX_THREAD_COUNT", None)))
+# executor = ThreadPoolExecutor(Config.getInt("GENERAL.MAX_THREAD_COUNT", 3)))
 
 API_URL = "https://api.deepai.org/api/nsfw-detector"
 
 
 def detect_nudity_deepai_api(image_path: str, api_key: str = None) -> int:
     if api_key is None:
-        api_key = Config().get("features.NUDITY_DETECTION.API_KEY", None)
+        api_key = Config.get("NUDITY_DETECTION.API_KEY", None)
     try:
         req = requests.post(
             API_URL,
@@ -44,7 +44,7 @@ def download_image_async(bot, update, file_id):
         # pass image to check nudity (thread)
         accuracy = detect_nudity_deepai_api(image_location)
         # decision delete message or not
-        if accuracy >= Config().get("features.NUDITY_DETECTION.ACCURACY"):
+        if accuracy >= Config.getFloat("NUDITY_DETECTION.ACCURACY_THRESHHOLD"):
             messageRemover(bot, update.message)
     except Exception as e:
         log.error(__file__, 'download_image_async', e)

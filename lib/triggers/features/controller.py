@@ -3,7 +3,7 @@ from lib.loader import Config
 
 FEATURES = []
 
-if Config().get("features.NUDITY_DETECTION.ACTIVE", False):
+if Config.get("NUDITY_DETECTION.ENABLED", False):
     FEATURES.append(nudity.handler)
 
 

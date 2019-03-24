@@ -109,8 +109,7 @@ def registration_verification(bot, update, job_queue, user):
     )
 
     # timer should be a number (we wanna use integer)
-    timer = str(Config().get('REGISTER_TIMER_MINUTES', 1))
-    timer = int(timer) if not timer.isdecimal() else 1
+    timer = Config.getInt('OPTIONS.REGISTER_TIMER_MINUTES', 1)
 
     # send verification message
     message = bot.send_message(
@@ -155,7 +154,7 @@ def bots(bot, update, job_queue):
                     user_id=update.message.from_user.id
                 )
         else:
-            if Config().get('features.LOGIN_RESTRICTION', False):
+            if Config.get('OPTIONS.LOGIN_RESTRICTION', False):
                 # restrict user
                 restrictUser(bot, update, user)
 
@@ -165,7 +164,7 @@ def bots(bot, update, job_queue):
 
 def telegram_link_remover(bot, update):
     # TODO: We should be handle url shorter later!
-    if not Config().get('features.TELEGRAM_LINK_REMOVER', False):
+    if not Config.get('OPTIONS.TELEGRAM_LINK_REMOVER', False):
         return None
 
     # if message has a text type

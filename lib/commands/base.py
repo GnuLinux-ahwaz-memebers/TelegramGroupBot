@@ -37,7 +37,7 @@ def __get_chat_id(bot, update):
 @group_command
 def group_link(bot, update):
     # TODO: we can turn off/on it with dynamic methods like send a command to turn off it
-    if Config().get('features.GROUP_LINK_ENABLE', False):
+    if Config.get('OPTIONS.GROUP_LINK_ENABLE', False):
 
         # Get Group link from templates
         invite_link = bot.getChat(
@@ -71,7 +71,7 @@ def report(bot, update):
     messageRemover(bot, update.message)
     try:
         # get chat_id of admins group
-        admins_group_chat_id = Config().get('ADMINS_GROUP_CHAT_ID', 0)
+        admins_group_chat_id = Config.getInt('GENERAL.ADMINS_GROUP_CHAT_ID', 0)
         if admins_group_chat_id != 0:
             forwarded_message = bot.forward_message(
                 chat_id=admins_group_chat_id,
