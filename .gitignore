@@ -1,5 +1,6 @@
 .idea
 .venv
 TODO
+config.ini
 config.json
 *.pyc
